@@ -2,9 +2,9 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 
 class OknoUpozorneni(QtWidgets.QMainWindow):
     """
-    Jedná se o vyskakovací okno, které přijíma jeden 
-    argument v podobě stringu, který zobrazuje 
-    uživateli jako zprávu.
+    Jedná se o vyskakovací okno, se zprávou pro 
+    uživatele. Objekt přijíma jeden agrument a to string
+    se zprávou, která se má uživateli zobrazit.
     """
     def __init__(self, text, **kwargs):
         super(OknoUpozorneni, self).__init__(**kwargs)
@@ -15,6 +15,10 @@ class OknoUpozorneni(QtWidgets.QMainWindow):
         
 
     def init_gui(self):
+        """
+        Funkce vytvoří GUI a nastaví základní funkce
+        a vzhled.
+        """
         #vytvoření GUI
         okno = QtWidgets.QWidget()
         okno_layout = QtWidgets.QVBoxLayout()

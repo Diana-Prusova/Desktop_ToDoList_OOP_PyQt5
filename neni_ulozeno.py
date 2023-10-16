@@ -3,9 +3,10 @@ from PyQt5 import QtWidgets, QtCore
 
 class OknoNeniUlozeno(QtWidgets.QMainWindow):
     """
-    Jedná se o vyskakovací okno, které přijíma jeden 
-    argument v podobě stringu, který zobrazuje 
-    uživateli jako zprávu.
+    Jedná se o vyskakovací okno, které se zobrazí 
+    v případě, že se uživatel snaží zavřít seznam úkolů, 
+    aniž by ho měl uložený. Okno nabídne uživateli 
+    seznam uložit nebo zavřít aplikaci bez uložení.
     """
     def __init__(self, **kwargs):
         super(OknoNeniUlozeno, self).__init__(**kwargs)
@@ -15,6 +16,10 @@ class OknoNeniUlozeno(QtWidgets.QMainWindow):
 
 
     def init_gui(self):
+        """
+        Funkce vytvoří GUI a nastaví základní funkce
+        a vzhled.
+        """
         #vytvoření GUI
         okno = QtWidgets.QWidget()
         okno_layout = QtWidgets.QVBoxLayout()
@@ -61,8 +66,15 @@ class OknoNeniUlozeno(QtWidgets.QMainWindow):
             super().keyPressEvent(event)
 
     def ulozit(self):
+        """
+        Funkce uloží seznam úkolů.
+        """
         ...
 
 
     def neulozit(self):
+        """
+        Funkce zavře aplikaci bez uložení.
+        """
         ...
+        self.close()

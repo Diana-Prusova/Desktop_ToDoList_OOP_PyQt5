@@ -9,7 +9,14 @@ import neni_ulozeno
 
 class ToDoList(QtWidgets.QMainWindow):
     """
-
+    Aplikace To do list umožňuje uživateli zapisovat si
+    a ukládat úkoly. Umožňnuje také označovat, které úkoly
+    již splněné. 
+    Podfunkce navíc: 
+    1. Úkol je možné přidat také klávesou enter.
+    2. Okno je možné zavřít kl. zkratkou CTRL+W
+    3. Pokud seznam není uložen, aplikace na to uživatele
+    před zavřením okna upozorní.
     """
 
     def __init__(self, **kwargs):
@@ -62,7 +69,6 @@ class ToDoList(QtWidgets.QMainWindow):
         box_tlacitka_layout.addWidget(self.uloz_list_button)
     
         # vzhled
-
         self.zapis_ukol_edit.setPlaceholderText("Zadej úkol...")
         self.seznam_ukolu_widget.setStyleSheet(
                             "QListWidget {" # styl widgetu
@@ -83,21 +89,22 @@ class ToDoList(QtWidgets.QMainWindow):
                             "background: darkgray;"
                             "border-radius: 5px;"
                             "}"
-                            "QListWidget QScrollBar::add-line:vertical, QListWidget QScrollBar::sub-line:vertical {"
-                            "background: none;"  # odstranění horního a dolního tlačítka
+                            "QListWidget QScrollBar::add-line:vertical,"
+                            "QListWidget QScrollBar::sub-line:vertical {"
+                            "background: white;"  # odstranění horního a dolního tlačítka
                             "}"
-                            "QListWidget QScrollBar:horizontal {" # horizontální lišta pozadí
-                            "background: white;"  
-                            "height: 10px;" 
-                            "border-radius: 5px;"
-                            "}"
-                            "QListWidget QScrollBar::handle:horizontal {" # horizontální lišta posuvník
-                            "background: darkgray;"
-                            "border-radius: 5px;"
-                            "}"
-                            "QListWidget QScrollBar::add-line:horizontal, QListWidget QScrollBar::sub-line:horizontal {"
-                            "background: none;"  # odstraneni levého a pravého tlačítka
-                            "}"
+                            # "QListWidget QScrollBar:horizontal {" # horizontální lišta pozadí
+                            # "background: white;"  
+                            # "height: 10px;" 
+                            # "border-radius: 5px;"
+                            # "}"
+                            # "QListWidget QScrollBar::handle:horizontal {" # horizontální lišta posuvník
+                            # "background: darkgray;"
+                            # "border-radius: 5px;"
+                            # "}"
+                            # "QListWidget QScrollBar::add-line:horizontal, QListWidget QScrollBar::sub-line:horizontal {"
+                            # "background: white;"  # odstraneni levého a pravého tlačítka
+                            # "}"
         )
         self.setStyleSheet(
                             "font-family: Arial, sans-serif;"
@@ -107,6 +114,7 @@ class ToDoList(QtWidgets.QMainWindow):
                             "margin-top: 10px;"
                             "margin-bottom: 10px;"
         )
+        self.seznam_ukolu_widget.setMinimumWidth(400)
 
         # funkcionalita
         self.novy_ukol_button.clicked.connect(self.novy_ukol)
@@ -115,6 +123,25 @@ class ToDoList(QtWidgets.QMainWindow):
         self.smaz_polozku_button.clicked.connect(self.smazat_polozku)
         self.smaz_list_button.clicked.connect(self.smazat_seznam)
         self.uloz_list_button.clicked.connect(self.uloz_seznam)
+
+
+    def pridani_ukolu(self, ukol, check=False):
+        """
+        Funkce přidá zapsaný úkol do widgetu zobrazující
+        zapsané úkoly.
+        """
+        # vytvoření widgetu
+        ukol_widget = QtWidgets.QListWidgetItem()
+        self.checkbox = QtWidgets.QCheckBox(ukol)
+
+        # přidání obsahu
+        self.checkbox.setChecked(check)
+        self.seznam_ukolu_widget.insertItem(0, ukol_widget)
+        self.seznam_ukolu_widget.setItemWidget(ukol_widget, self.checkbox)
+        self.checkbox.stateChanged.connect(self.pocet_ukolu)
+
+        # aktualizace počtu úkolů
+        self.pocet_ukolu()
 
 
     def novy_ukol(self):
@@ -149,20 +176,6 @@ class ToDoList(QtWidgets.QMainWindow):
             self.zapis_ukol_edit.clear()
 
 
-    def pridani_ukolu(self, ukol, check=False):
-        """
-        Funkce přidá zapsaný úkol do widgetu zobrazující
-        zapsané úkoly.
-        """
-        ukol_widget = QtWidgets.QListWidgetItem()
-        self.checkbox = QtWidgets.QCheckBox(ukol)
-        self.checkbox.setChecked(check)
-        self.seznam_ukolu_widget.insertItem(0, ukol_widget)
-        self.seznam_ukolu_widget.setItemWidget(ukol_widget, self.checkbox)
-        self.checkbox.stateChanged.connect(self.pocet_ukolu)
-        self.pocet_ukolu()
-
-
     def smazat_polozku(self):
         """
         Funkce smaže vybranou položku seznamu.
@@ -178,6 +191,51 @@ class ToDoList(QtWidgets.QMainWindow):
         """
         self.seznam_ukolu_widget.clear()
         self.pocty_ukol_label.setText("počet úkolů: 0 (splněno: 0)")
+
+
+    def pocet_ukolu(self):
+        """
+        Funkce spočítá celkový počet zadaných úkolů
+        a splněných úkolů. Výsledné hodnoty zobrazí
+        v daném widgetu a případně zobrazí vyskakovací okna:
+
+        GRATULACE: pokud jsou splněny všechny úkoly
+        PŘEDPOSLENÍ: motivační okno, které se zobrazí, pokud
+            uživateli zbývá splnit už jen jeden úkol.
+        POLOVINA: motivační okno, které uživatele informuje
+            že už je za polovinou seznamu.
+        """
+        # spočítání úkolů
+        self.sum_ukolu = 0
+        self.sum_splnenych_ukolu = 0
+        for index in range(self.seznam_ukolu_widget.count()):
+            ukol_widget = self.seznam_ukolu_widget.itemWidget(self.seznam_ukolu_widget.item(index))
+            if ukol_widget.isChecked():
+                self.sum_splnenych_ukolu += 1
+            self.sum_ukolu += 1
+
+        # zobrazení výsledku
+        self.pocty_ukol_label.setText(f"počet úkolů: {self.sum_ukolu} "
+                            f"(splněno: {self.sum_splnenych_ukolu})")
+
+        # zobrazení vyskakovacích oken
+        if self.sum_ukolu == self.sum_splnenych_ukolu:
+            text = "Vše splněno, GRATULUJI!"
+            self.gratulace = upozorneni.OknoUpozorneni(text)
+            self.gratulace.show()
+        else:
+            if self.sum_ukolu > 3:
+                if self.sum_splnenych_ukolu == (self.sum_ukolu - 1):
+                    text = "Perfektní, zbývá už jen poslední úkol."
+                    self.gratulace_posledi = upozorneni.OknoUpozorneni(text)
+                    self.gratulace_posledi.show()
+            if self.sum_ukolu > 7:
+                if (self.sum_splnenych_ukolu > ceil(self.sum_ukolu / 2) and
+                    self.sum_splnenych_ukolu < ceil(self.sum_ukolu / 2) + 2): 
+                    text = "Už jste za půlkou, WOW!"
+                    self.gratulace_pulka = upozorneni.OknoUpozorneni(text)
+                    self.gratulace_pulka.show()
+
 
     def ukoly_na_dict(self) -> dict:
         """
@@ -197,13 +255,15 @@ class ToDoList(QtWidgets.QMainWindow):
 
         return ukoly_dict
     
+    
     def uloz_seznam(self):
         """
         Funkce pomocí funkce "ukoly_na_dict()" uloží 
-        zadané úkoly do souboru .json.
+        zadané úkoly do souboru json.
         """
         with open("ulozene_ukoly.json", mode="w", encoding="utf-8") as file:
             json.dump(self.ukoly_na_dict(), file)
+
 
     def ziskani_uloz_ukolu(self) -> dict:
         """
@@ -218,58 +278,30 @@ class ToDoList(QtWidgets.QMainWindow):
     def vypsani_uloz_ukolu(self):
         """
         Funkce pomocí funkce "ziskani_uloz_ukolu()" získá
-        uložené úkoly a pomocí funkce "pridani_ukolu" je 
-        zapíše do seznamu.
+        uložené úkoly a následně je vypíše do příslušného widgetu.
         """
+        # procházení seznamu úkolů
         for key, value in (self.ziskani_uloz_ukolu()).items():
             if value == 0:
                 check = False
             elif value == 2:
                 check = True
                 
+            # vytvoření prázdného objektu
             ukol_widget = QtWidgets.QListWidgetItem()
             self.checkbox = QtWidgets.QCheckBox(key)
+
+            # přidání získaného úkolu do nového objektu
             self.checkbox.setChecked(check)
             self.seznam_ukolu_widget.insertItem(0, ukol_widget)
             self.seznam_ukolu_widget.setItemWidget(ukol_widget, self.checkbox)
             self.checkbox.stateChanged.connect(self.pocet_ukolu)
 
 
-
-    def pocet_ukolu(self):
-        """
-        
-        """
-        self.sum_ukolu = 0
-        self.sum_splnenych_ukolu = 0
-        for index in range(self.seznam_ukolu_widget.count()):
-            ukol_widget = self.seznam_ukolu_widget.itemWidget(self.seznam_ukolu_widget.item(index))
-            if ukol_widget.isChecked():
-                self.sum_splnenych_ukolu += 1
-            self.sum_ukolu += 1
-        self.pocty_ukol_label.setText(f"počet úkolů: {self.sum_ukolu} "
-                            f"(splněno: {self.sum_splnenych_ukolu})")
-
-
-        if self.sum_ukolu == self.sum_splnenych_ukolu:
-            text = "Vše splněno, GRATULUJI!"
-            self.gratulace = upozorneni.OknoUpozorneni(text)
-            self.gratulace.show()
-        else:
-            if self.sum_ukolu > 3:
-                if self.sum_splnenych_ukolu == (self.sum_ukolu - 1):
-                    text = "Perfektní, zbývá už jen poslední úkol."
-                    self.gratulace_posledi = upozorneni.OknoUpozorneni(text)
-                    self.gratulace_posledi.show()
-            if self.sum_ukolu > 7:
-                if (self.sum_splnenych_ukolu > ceil(self.sum_ukolu / 2) and
-                    self.sum_splnenych_ukolu < ceil(self.sum_ukolu / 2) + 2): 
-                    text = "Už jste za půlkou, WOW!"
-                    self.gratulace_pulka = upozorneni.OknoUpozorneni(text)
-                    self.gratulace_pulka.show()
-        
-
     def closeEvent(self, event):
+        """
+        
+        """
 
         if self.ukoly_na_dict() == self.ziskani_uloz_ukolu():
             event.accept()
