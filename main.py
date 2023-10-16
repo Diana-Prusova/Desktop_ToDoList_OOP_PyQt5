@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from math import ceil
 import sys
 import json
@@ -277,6 +277,17 @@ class ToDoList(QtWidgets.QMainWindow):
             event.ignore()
             self.pozor_neulozeno = neni_ulozeno.OknoNeniUlozeno()
             self.pozor_neulozeno.show()
+
+
+    def keyPressEvent(self, event):
+        """
+        Funkce umožňuje zavřít okno klávesovou zkratkou CTRL+W.
+        """
+        if event.modifiers() & QtCore.Qt.ControlModifier:
+            if event.key() == QtCore.Qt.Key_W:
+                self.close()
+        else:
+            super().keyPressEvent(event)
             
 
 

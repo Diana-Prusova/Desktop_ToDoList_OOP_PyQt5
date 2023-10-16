@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets, QtCore
-import sys
+
 
 class OknoNeniUlozeno(QtWidgets.QMainWindow):
     """
@@ -47,13 +47,22 @@ class OknoNeniUlozeno(QtWidgets.QMainWindow):
                                                  "margin: 15px;")
 
         # funkcionalita
-        self.ano_button.clicked.connect(self.zavri_vse)
-        self.ne_button.clicked.connect(self.zavri_upozorneni)
+        self.ne_button.clicked.connect(self.neulozit)
+        self.ano_button.clicked.connect(self.ulozit)
 
-    def zavri_vse(self):
-        self.close()
-        self.parent().close()
+    def keyPressEvent(self, event):
+        """
+        Funkce umožňuje zavřít okno klávesovou zkratkou CTRL+W.
+        """
+        if event.modifiers() & QtCore.Qt.ControlModifier:
+            if event.key() == QtCore.Qt.Key_W:
+                self.close()
+        else:
+            super().keyPressEvent(event)
+
+    def ulozit(self):
+        ...
 
 
-    def zavri_upozorneni(self):
-        self.close()
+    def neulozit(self):
+        ...
