@@ -29,6 +29,7 @@ class ToDoList(QtWidgets.QMainWindow):
 
         self.sum_ukolu = 0
         self.sum_splnenych_ukolu = 0
+        self.zavirani_okna = False
 
     def init_gui(self):
         """
@@ -302,13 +303,16 @@ class ToDoList(QtWidgets.QMainWindow):
         """
         
         """
-
-        if self.ukoly_na_dict() == self.ziskani_uloz_ukolu():
+        if (self.ukoly_na_dict() == self.ziskani_uloz_ukolu()
+            or
+            self.zavirani_okna):
             event.accept()
         else:
             event.ignore()
-            self.pozor_neulozeno = neni_ulozeno.OknoNeniUlozeno()
+            self.pozor_neulozeno = neni_ulozeno.OknoNeniUlozeno(self)
             self.pozor_neulozeno.show()
+            self.zavirani_okna = True
+
 
 
     def keyPressEvent(self, event):
@@ -322,7 +326,7 @@ class ToDoList(QtWidgets.QMainWindow):
             super().keyPressEvent(event)
             
 
-
-aplikace = QtWidgets.QApplication(sys.argv)
-okno = ToDoList()
-sys.exit(aplikace.exec_())
+if __name__ == '__main__':
+    aplikace = QtWidgets.QApplication(sys.argv)
+    okno = ToDoList()
+    sys.exit(aplikace.exec_())

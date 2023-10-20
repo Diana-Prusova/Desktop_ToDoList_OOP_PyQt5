@@ -8,11 +8,12 @@ class OknoNeniUlozeno(QtWidgets.QMainWindow):
     aniž by ho měl uložený. Okno nabídne uživateli 
     seznam uložit nebo zavřít aplikaci bez uložení.
     """
-    def __init__(self, **kwargs):
+    def __init__(self, rodic, **kwargs):
         super(OknoNeniUlozeno, self).__init__(**kwargs)
         
         self.init_gui()
         self.show()
+        self.rodic = rodic
 
 
     def init_gui(self):
@@ -55,6 +56,7 @@ class OknoNeniUlozeno(QtWidgets.QMainWindow):
         self.ne_button.clicked.connect(self.neulozit)
         self.ano_button.clicked.connect(self.ulozit)
 
+
     def keyPressEvent(self, event):
         """
         Funkce umožňuje zavřít okno klávesovou zkratkou CTRL+W.
@@ -69,12 +71,15 @@ class OknoNeniUlozeno(QtWidgets.QMainWindow):
         """
         Funkce uloží seznam úkolů.
         """
-        ...
+        self.rodic.uloz_seznam()
+        self.close()
+        self.rodic.close()
 
 
     def neulozit(self):
         """
         Funkce zavře aplikaci bez uložení.
         """
-        ...
         self.close()
+        self.rodic.close()
+    
