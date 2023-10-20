@@ -2,9 +2,8 @@ from PyQt5 import QtWidgets, QtCore
 from math import ceil
 import sys
 import json
-import upozorneni
+import okno_upozorneni
 import neni_ulozeno
-
 
 
 class ToDoList(QtWidgets.QMainWindow):
@@ -12,6 +11,7 @@ class ToDoList(QtWidgets.QMainWindow):
     Aplikace To do list umožňuje uživateli zapisovat si
     a ukládat úkoly. Umožňnuje také označovat, které úkoly
     již splněné. 
+
     Podfunkce navíc: 
     1. Úkol je možné přidat také klávesou enter.
     2. Okno je možné zavřít kl. zkratkou CTRL+W
@@ -94,18 +94,6 @@ class ToDoList(QtWidgets.QMainWindow):
                             "QListWidget QScrollBar::sub-line:vertical {"
                             "background: white;"  # odstranění horního a dolního tlačítka
                             "}"
-                            # "QListWidget QScrollBar:horizontal {" # horizontální lišta pozadí
-                            # "background: white;"  
-                            # "height: 10px;" 
-                            # "border-radius: 5px;"
-                            # "}"
-                            # "QListWidget QScrollBar::handle:horizontal {" # horizontální lišta posuvník
-                            # "background: darkgray;"
-                            # "border-radius: 5px;"
-                            # "}"
-                            # "QListWidget QScrollBar::add-line:horizontal, QListWidget QScrollBar::sub-line:horizontal {"
-                            # "background: white;"  # odstraneni levého a pravého tlačítka
-                            # "}"
         )
         self.setStyleSheet(
                             "font-family: Arial, sans-serif;"
@@ -171,7 +159,7 @@ class ToDoList(QtWidgets.QMainWindow):
             # upozornění na duplicitu
             else:
                 text = "Tento úkol již máte zaznamenaný."
-                self.upozorneni = upozorneni.OknoUpozorneni(text)
+                self.upozorneni = okno_upozorneni.OknoUpozorneni(text)
                 self.upozorneni.show()
             
             self.zapis_ukol_edit.clear()
@@ -222,19 +210,19 @@ class ToDoList(QtWidgets.QMainWindow):
         # zobrazení vyskakovacích oken
         if self.sum_ukolu == self.sum_splnenych_ukolu:
             text = "Vše splněno, GRATULUJI!"
-            self.gratulace = upozorneni.OknoUpozorneni(text)
+            self.gratulace = okno_upozorneni.OknoUpozorneni(text)
             self.gratulace.show()
         else:
             if self.sum_ukolu > 3:
                 if self.sum_splnenych_ukolu == (self.sum_ukolu - 1):
                     text = "Perfektní, zbývá už jen poslední úkol."
-                    self.gratulace_posledi = upozorneni.OknoUpozorneni(text)
+                    self.gratulace_posledi = okno_upozorneni.OknoUpozorneni(text)
                     self.gratulace_posledi.show()
             if self.sum_ukolu > 7:
                 if (self.sum_splnenych_ukolu > ceil(self.sum_ukolu / 2) and
                     self.sum_splnenych_ukolu < ceil(self.sum_ukolu / 2) + 2): 
                     text = "Už jste za půlkou, WOW!"
-                    self.gratulace_pulka = upozorneni.OknoUpozorneni(text)
+                    self.gratulace_pulka = okno_upozorneni.OknoUpozorneni(text)
                     self.gratulace_pulka.show()
 
 
@@ -301,7 +289,10 @@ class ToDoList(QtWidgets.QMainWindow):
 
     def closeEvent(self, event):
         """
-        
+        Funkce upravuje zavírání aplikace. Zkontroluje, jestli
+        je seznam úkolů uložen a pokud není, otevře podokno, 
+        které dá uživateli možnost seznam uložit, nebo aplikaci
+        zavřít bez uložení.
         """
         if (self.ukoly_na_dict() == self.ziskani_uloz_ukolu()
             or
@@ -311,8 +302,8 @@ class ToDoList(QtWidgets.QMainWindow):
             event.ignore()
             self.pozor_neulozeno = neni_ulozeno.OknoNeniUlozeno(self)
             self.pozor_neulozeno.show()
+            # pojistka, aby při umyslném zavření neuloženého seznamu nedošlo ke smyčce
             self.zavirani_okna = True
-
 
 
     def keyPressEvent(self, event):
