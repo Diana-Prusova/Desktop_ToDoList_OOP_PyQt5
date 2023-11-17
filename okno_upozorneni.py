@@ -39,7 +39,6 @@ class OknoUpozorneni(QtWidgets.QMainWindow):
         # vzhled
 
         self.text_upozorneni_label.setAlignment(QtCore.Qt.AlignCenter)
-        
         self.info_label.setAlignment(QtCore.Qt.AlignCenter)
         self.setStyleSheet("font-family: Arial, sans-serif;")
         self.text_upozorneni_label.setStyleSheet("font-size: 17px;")

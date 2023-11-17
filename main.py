@@ -259,8 +259,11 @@ class ToDoList(QtWidgets.QMainWindow):
         Funkce načte seznam úložených úkolů a vrátí 
         jej ve formátu dict.
         """
-        with open("ulozene_ukoly.json", mode="r", encoding="utf-8") as file:
-            seznam_ukolu = json.load(file)
+        try:
+            with open("ulozene_ukoly.json", mode="r", encoding="utf-8") as file:
+                seznam_ukolu = json.load(file)
+        except FileNotFoundError:
+            seznam_ukolu = []
 
         return seznam_ukolu
 
