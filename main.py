@@ -263,7 +263,7 @@ class ToDoList(QtWidgets.QMainWindow):
             with open("ulozene_ukoly.json", mode="r", encoding="utf-8") as file:
                 seznam_ukolu = json.load(file)
         except FileNotFoundError:
-            seznam_ukolu = []
+            seznam_ukolu = dict()
 
         return seznam_ukolu
 
