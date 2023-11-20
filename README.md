@@ -1,9 +1,9 @@
 
 # Desktopová aplikace To do list (OOP, PyQt5)
 
-Jedná se o kód jednoduché aplikace pro zapisování a odškrtávání úkolů. Aplikaci je možné také stáhnout jako klasickou desktopovou aplikaci a to zde: 
+Jedná se o kód jednoduché aplikace pro zapisování a odškrtávání úkolů. Aplikaci je možné také stáhnout jako klasickou desktopovou aplikaci (pro windows) a to zde: 
 
-    ...bude doplněno...
+    https://drive.google.com/file/d/11q910qJxslZVFHH3zf1ArZOgqwhoN7o6/view?usp=drive_link
 
 Cílem při psaní tohoto kódu bylo získat větší znalost knihovny PyQt5 a naučit se vytvořit z kódu funkční aplikaci, který si může kdokoliv stáhnout a používat ji.
 
